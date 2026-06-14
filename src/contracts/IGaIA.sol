@@ -14,13 +14,13 @@ interface IGaIA {
   /**
    * @notice Risk data structure
    * @param id data id
-   * @param idAsset monitored asset id
+   * @param idTruss monitored truss id
    * @param risk risk level associated to the asset
    * @param consumed true if consumed byb the dashboard
    */
   struct RiskData {
     uint256 id;
-    uint256 idAsset;
+    uint256 idTruss;
     uint256 risk;
     bool consumed;
   }
@@ -33,13 +33,13 @@ interface IGaIA {
    * @notice Emit when a new risk event is registered
    * @param id unique identifier of the struct
    */
-  event RiskAdded(uint256 indexed id);
+  event DataAdded(uint256 indexed id);
 
   /**
-   * @notice Emite when a risk is updated
+   * @notice Emite when a risk struct is updated
    * @param id unique identifier of the struct
    */
-  event RiskUpdated(uint256 indexed id);
+  event DataUpdated(uint256 indexed id);
 
   /**
    * @notice Emit when ownership changes
@@ -56,19 +56,19 @@ interface IGaIA {
    * @notice Emit when risk data already exists
    * @param id unique identifier of the struct
    */
-  error RiskAlreadyExists(uint256 id);
+  error DataAlreadyExists(uint256 id);
 
   /**
    * @notice Emit when a risk struct isn't valid
    * @param id unique identifier of the struct
    */
-  error RiskNotValid(uint256 id);
+  error DataNotValid(uint256 id);
 
   /**
-   * @notice Emit when a risk can't be found
+   * @notice Emit when a risk struct can't be found
    * @param id unique identifier of the struct
    */
-  error RiskNotFound(uint256 id);
+  error DataNotFound(uint256 id);
 
   /**
    * @notice Emit when a caller is unauthorized 
@@ -87,164 +87,91 @@ interface IGaIA {
   //////////////////////////////////////////////////////////////*/
 
   /**
-   * @notice Aggiunge un nuovo asset al registro
-   * @param asset Dati dell'asset da aggiungere
+   * @notice Add a new data struct to the registry
+   * @param data of the risk event to be created
    */
-  function addAsset(AssetData calldata asset) external;
+  function addData(RiskData calldata data) external;
 
   /**
-   * @notice Aggiorna un asset esistente
-   * @param asset Dati dell'asset da aggiornare
+   * @notice Update a risk data struct
+   * @param data of the risk event to be updated
    */
-  function updateAsset(AssetData calldata asset) external;
+  function updateData(RiskData calldata data) external;
 
   /**
-   * @notice Aggiunge o aggiorna un asset in base alla sua esistenza
-   * @param asset Dati dell'asset da sottoporre a upsert
+   * @notice Add or update a risk data struct
+   * @param data of the risk event to be updated or created
    */
-  function upsertAsset(AssetData calldata asset) external;
+  function upsertData(RiskData calldata data) external;
 
   /**
-   * @notice Aggiunge piu' asset in batch
-   * @param assets Array di dati asset da aggiungere
+   * @notice Add multiple risk data events in batch
+   * @param data array of the risk events to be created
    */
-  function addAssets(AssetData[] calldata assets) external;
+  function addMultipleData(RiskData[] calldata data) external;
 
   /**
-   * @notice Aggiorna piu' asset in batch
-   * @param assets Array di dati asset da aggiornare
+   * @notice Update multiple risk data events in batch
+   * @param data array of the risk events to be updated
    */
-  function updateAssets(AssetData[] calldata assets) external;
+  function updateMultipleData(RiskData[] calldata data) external;
 
   /**
-   * @notice Aggiunge o aggiorna piu' asset in base alla loro esistenza
-   * @param assets Array di dati asset da sottoporre a upsert
+   * @notice Update or create multiple risk data events in batch
+   * @param data array of the risk events to be updated or created
    */
-  function upsertAssets(AssetData[] calldata assets) external;
+  function upsertMultipleData(RiskData[] calldata data) external;
 
   /**
-   * @notice Aggiorna i dati di tracciabilita' per un singolo asset esistente
-   * @param traceability Dati di tracciabilita' da aggiornare
+   * @notice Recovers risk event data by id
+   * @param id unique identifier of the struct
+   * @return data of the risk event identified by the id
    */
-  function setAssetTraceability(AssetTraceability calldata traceability) external;
+  function getDataById(uint256 id) external view returns (RiskData memory data);
 
   /**
-   * @notice Aggiorna i dati di tracciabilita' per piu' asset esistenti
-   * @param traceabilities Array di dati di tracciabilita' da aggiornare
+   * @notice Verify if a risk event exists
+   * @param id unique identifier of the struct
+   * @return exists true if the risk event data exists
    */
-  function setAssetTraceabilities(AssetTraceability[] calldata traceabilities) external;
+  function dataExists(uint256 id) external view returns (bool exists);
 
   /**
-   * @notice Recupera i dati di un asset tramite il suo identificativo univoco
-   * @param sBene Identificativo univoco dell'asset
-   * @return asset Dati dell'asset associato all'identificativo fornito
+   * @notice Recovers data by truss id
+   * @param idTruss id of monitored truss
+   * @return data risk event data array by truss not consumed by the dashboard
    */
-  function getAssetById(string calldata sBene) external view returns (AssetData memory asset);
+  function getAssetByTruss(uint256 idTruss) external view returns (RiskData[] memory data);
 
   /**
-   * @notice Recupera i dati di tracciabilita' di un asset tramite il suo identificativo univoco
-   * @param sBene Identificativo univoco dell'asset
-   * @return traceability Dati di tracciabilita' associati all'identificativo fornito
+   * @notice Recovers a page of the risk events data not consumed by truss
+   * @param idTruss id of monitored truss
+   * @param offset start index
+   * @param limit max number of data to be returned
+   * @return data array of risk events by truss id
    */
-  function getAssetTraceabilityById(string calldata sBene) external view returns (AssetTraceability memory traceability);
-
-  /**
-   * @notice Verifica se un asset esiste
-   * @param sBene Identificativo univoco dell'asset
-   * @return exists true se l'asset esiste
-   */
-  function assetExists(string calldata sBene) external view returns (bool exists);
-
-  /**
-   * @notice Recupera gli asset per nome regione
-   * @param nomeRegione Nome della regione
-   * @return assets Array di dati asset presenti nella regione specificata
-   */
-  function getAssetByRegion(string calldata nomeRegione) external view returns (AssetData[] memory assets);
-
-  /**
-   * @notice Recupera gli asset per nome regione con paginazione
-   * @param nomeRegione Nome della regione
-   * @param offset Indice iniziale
-   * @param limit Numero massimo di asset da restituire
-   * @return assets Array di dati asset presenti nella regione specificata
-   */
-  function getAssetByRegionRange(
-    string calldata nomeRegione,
+  function getAssetByTrussRange(
+    uint256 idTruss,
     uint256 offset,
     uint256 limit
-  ) external view returns (AssetData[] memory assets);
+  ) external view returns (RiskData[] memory data);
 
   /**
-   * @notice Recupera il numero di asset in una regione
-   * @param nomeRegione Nome della regione
-   * @return count Numero di asset nella regione
+   * @notice Recovers the number of risk events not consumed by truss
+   * @param idTruss id of the monitored truss
+   * @return count of the risk events not consumed by truss
    */
-  function getAssetByRegionCount(string calldata nomeRegione) external view returns (uint256 count);
+  function getDataByTrussCount(uint256 idTruss) external view returns (uint256 count);
 
   /**
-   * @notice Recupera gli asset per nome provincia
-   * @param nomeProvincia Nome della provincia
-   * @return assets Array di dati asset presenti nella provincia specificata
-   */
-  function getAssetByProvince(string calldata nomeProvincia) external view returns (AssetData[] memory assets);
-
-  /**
-   * @notice Recupera gli asset per nome provincia con paginazione
-   * @param nomeProvincia Nome della provincia
-   * @param offset Indice iniziale
-   * @param limit Numero massimo di asset da restituire
-   * @return assets Array di dati asset presenti nella provincia specificata
-   */
-  function getAssetByProvinceRange(
-    string calldata nomeProvincia,
-    uint256 offset,
-    uint256 limit
-  ) external view returns (AssetData[] memory assets);
-
-  /**
-   * @notice Recupera il numero di asset in una provincia
-   * @param nomeProvincia Nome della provincia
-   * @return count Numero di asset nella provincia
-   */
-  function getAssetByProvinceCount(string calldata nomeProvincia) external view returns (uint256 count);
-
-  /**
-   * @notice Recupera gli asset per nome comune
-   * @param nomeComune Nome del comune
-   * @return assets Array di dati asset presenti nel comune specificato
-   */
-  function getAssetByMunicipality(string calldata nomeComune) external view returns (AssetData[] memory assets);
-
-  /**
-   * @notice Recupera gli asset per nome comune con paginazione
-   * @param nomeComune Nome del comune
-   * @param offset Indice iniziale
-   * @param limit Numero massimo di asset da restituire
-   * @return assets Array di dati asset presenti nel comune specificato
-   */
-  function getAssetByMunicipalityRange(
-    string calldata nomeComune,
-    uint256 offset,
-    uint256 limit
-  ) external view returns (AssetData[] memory assets);
-
-  /**
-   * @notice Recupera il numero di asset in un comune
-   * @param nomeComune Nome del comune
-   * @return count Numero di asset nel comune
-   */
-  function getAssetByMunicipalityCount(string calldata nomeComune) external view returns (uint256 count);
-
-  /**
-   * @notice Restituisce l'indirizzo del proprietario corrente
-   * @return currentOwner Indirizzo del proprietario del contratto
+   * @notice Returns the current owner address
+   * @return currentOwner address
    */
   function owner() external view returns (address currentOwner);
 
   /**
-   * @notice Trasferisce la proprieta' a un nuovo proprietario
-   * @param newOwner Indirizzo del nuovo proprietario
+   * @notice Transfers ownership to the new owner
+   * @param newOwner address
    */
   function transferOwnership(address newOwner) external;
 }
