@@ -1,0 +1,9 @@
+out
+cache
+.agents
+.codex
+test
+.env
+.env.*
+!.env.example
+broadcast
