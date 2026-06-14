@@ -9,15 +9,16 @@ TRAIN_SIZE = 1000
 
 timestamps_train = pd.date_range(start="2026-01-01", periods=TRAIN_SIZE, freq="H")
 
-# Inclinazione traliccio (in gradi) lugo gli assi X e Y (da considerare baseline)
+# Inclinazione traliccio (in gradi) lungo gli assi X e Y (da considerare baseline)
 baseline_x = 0.12
 baseline_y = -0.05
 
 # Misure in condizioni normali
-# Poichè l'addestramento è NON SUPERVISIONATO, addestreremo il modello solo sulle condizioni normali (per esempio, l'inclinazione subisce solo solo micro-vibrazioni dovute al vento)
+# Poichè l'addestramento sarà NON SUPERVISIONATO, addestreremo il modello solo sulle condizioni normali (per esempio, l'inclinazione subisce solo solo micro-vibrazioni dovute al vento)
 # L'obiettivo è che, in caso di variazioni dal comportamento "normale" delle misurazioni, il modello si renda conto che qualcosa non va
 train_data = {
     "timestamp": timestamps_train,
+    "pylon_id": "T1",
     "rain_mm": np.random.choice([0.0, 0.2, 0.4], p=[0.9, 0.08, 0.02], size=TRAIN_SIZE),
     "umidity_pct": np.clip(np.random.normal(45, 5, size=TRAIN_SIZE), 10, 100),
     "temp_air": np.random.normal(15, 3, size=TRAIN_SIZE),
@@ -38,6 +39,7 @@ timestamps_test = pd.date_range(start="2026-03-01", periods=TEST_SIZE, freq="H")
 
 test_data = {
     "timestamp": timestamps_test,
+    "pylon_id": "T1",
     "rain_mm": np.random.choice([0.0, 0.2, 0.4], p=[0.9, 0.08, 0.02], size=TEST_SIZE),
     "umidity_pct": np.clip(np.random.normal(45, 5, size=TEST_SIZE), 10, 100),
     "temp_air": np.random.normal(15, 3, size=TEST_SIZE),
