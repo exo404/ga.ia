@@ -1,4 +1,5 @@
 # ga.ia
+
 > Intelligent landslide risk monitoring system for Terna's electrical grid infrastructure.
 > Powered by Solana, Solana Agent Kit, and OpenAI.
 
