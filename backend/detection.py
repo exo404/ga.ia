@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 
 from sklearn.preprocessing import MinMaxScaler
+
 import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, RepeatVector, TimeDistributed, Input
 
 tf.random.set_seed(42)
 
@@ -53,4 +56,38 @@ def create_loops(data, window_size):
 X_train_seq = create_loops(X_train_scaled, LOOKBACK_WINDOW)
 X_test_seq = create_loops(X_test_scaled, LOOKBACK_WINDOW)
 
-print(f"Shape del dataset di training: {X_train_seq.shape}")
+#print(f"Shape del dataset di training: {X_train_seq.shape}")
+
+timesteps = X_train_seq.shape[1]
+num_features = X_train_seq.shape[2]
+
+model = Sequential([
+    Input(shape=(timesteps, num_features)),
+    LSTM(32, activation="relu", return_sequences=False),
+    RepeatVector(timesteps),
+    LSTM(32, activation="relu", return_sequences=True),
+    TimeDistributed(Dense(num_features))
+])
+
+model.compile(optimizer="adam", loss="mae")
+
+#model.summary()
+
+history = model.fit(
+    X_train_seq, X_train_seq, 
+    epochs=10, 
+    batch_size=32, 
+    validation_split=0.1, 
+    verbose=1
+)
+
+print("Calcolo delle metriche di Anomaly Detection")
+
+# Errore MAE sulle ricostruzioni del Train Set
+X_train_pred = model.predict(X_train_seq)
+train_mae_loss = np.mean(np.abs(X_train_pred - X_train_seq), axis=(1, 2))
+
+# Definiamo la soglia critica: prendiamo il 99° percentile degli errori commessi sulla normalità.
+# Qualsiasi errore più alto del 99% degli errori normali sarà dichiarato anomalia.
+SOGLIA_CRITICA = np.percentile(train_mae_loss, 99)
+print(f"Soglia di Ricostruzione MAE calcolata (99° Percentile): {SOGLIA_CRITICA:.4f}")
