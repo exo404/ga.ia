@@ -16,6 +16,15 @@ baseline_y = -0.05
 # Misure in condizioni normali
 # Poichè l'addestramento sarà NON SUPERVISIONATO, addestreremo il modello solo sulle condizioni normali (per esempio, l'inclinazione subisce solo solo micro-vibrazioni dovute al vento)
 # L'obiettivo è che, in caso di variazioni dal comportamento "normale" delle misurazioni, il modello si renda conto che qualcosa non va
+
+# timestamp: timestamp di invio dei dati raccolti nell'arco temporale
+# pylon_id: identificativo del traliccio
+# rain_mm: misura in millimetri della pioggia fornita da un pluviometro
+# umidity_pct: umidità del suolo in percentuale
+# temp_air: temperatura dell'aria in gradi Celsius
+# temp_air: temperatura del suolo in gradi Celsius
+# tilt_x: inclinazione in gradi del traliccio rispetto all'asse X
+# tilt_y: inclinazione in gradi del traliccio rispetto all'asse Y
 train_data = {
     "timestamp": timestamps_train,
     "pylon_id": "T1",
