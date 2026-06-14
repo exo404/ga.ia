@@ -140,7 +140,7 @@ In another terminal, deploy using the default funded Anvil account:
 
 ```bash
 source .env
-PRIVATE_KEY=$PRIVATE_KEY_LOCAL forge script script/DeployGaIA.s.sol:DeployGaIA \
+PRIVATE_KEY=$PRIVATE_KEY_LOCAL forge script contracts/script/DeployGaIA.s.sol:DeployGaIA \
   --broadcast \
   --rpc-url local
 ```
@@ -148,7 +148,7 @@ PRIVATE_KEY=$PRIVATE_KEY_LOCAL forge script script/DeployGaIA.s.sol:DeployGaIA \
 ### Deploy devnet
 
 ```bash
-forge script script/DeployGaIA.s.sol:DeployGaIA \
+forge script contracts/script/DeployGaIA.s.sol:DeployGaIA \
   --broadcast \
   --rpc-url neon_devnet \
   --legacy \
@@ -158,7 +158,7 @@ forge script script/DeployGaIA.s.sol:DeployGaIA \
 ### Deploy mainnet
 
 ```bash
-forge script script/DeployGaIA.s.sol:DeployGaIA \
+forge script contracts/script/DeployGaIA.s.sol:DeployGaIA \
   --broadcast \
   --rpc-url neon_mainnet \
   --legacy \
@@ -173,8 +173,7 @@ forge script script/DeployGaIA.s.sol:DeployGaIA \
 forge verify-contract \
   --chain-id $CHAIN_ID_DEVNET \
   <CONTRACT_ADDRESS> \
-  src/contracts/GaIA.sol:GaIA \
+  contracts/src/GaIA.sol:GaIA \
   --verifier-url $VERIFIER_URL_BLOCKSCOUT \
   --verifier blockscout
 ```
->>>>>>> Stashed changes

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: PPL
 pragma solidity ^0.8.24;
 
-import {GaIA} from "../src/contracts/GaIA.sol";
+import {GaIA} from "../src/GaIA.sol";
 
 interface Vm {
     function envUint(string calldata name) external view returns (uint256 value);

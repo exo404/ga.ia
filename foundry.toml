@@ -1,7 +1,7 @@
 [profile.default]
-src = "src"
-test = "test"
-script = "script"
+src = "contracts/src"
+test = "contracts/test"
+script = "contracts/script"
 out = "out"
 cache_path = "cache"
 solc = "0.8.28"
