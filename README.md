@@ -1,32 +1,96 @@
 # ga.ia
-Ctrl/Shift Hackaton 2026 project. Intelligent monitoring system for landslides and natural hazards powered by blockchain and machine learning.
 
-## Struttura del Progetto
+> Intelligent landslide risk monitoring system for Terna's electrical grid infrastructure.
+> Powered by Solana, Solana Agent Kit, and OpenAI.
 
-Il progetto attualmente contiene l'MVP per il monitoraggio dei tralicci Terna, suddiviso in due componenti principali:
-1. **Frontend**: Dashboard Web per la visualizzazione dei rischi in tempo reale.
-2. **Agent AI**: Agente autonomo basato su Solana per la valutazione del livello di rischio.
+by NapulETH 2025 3-voting creators:
+Simone Montella, Alberto Petillo, Valerio Conte
+
+**Ctrl/Shift Hackathon 2026** 
 
 ---
 
-## Come Avviare il Progetto in Locale
+## Quick Start
 
-### 1. Avvio della Dashboard Frontend
-La web app è costruita con React e Vite.
+### Prerequisites
 
-Apri un terminale nella root del progetto ed esegui:
+| Tool | Version | Install |
+|---|---|---|
+| Node.js | ≥ 20 | [nodejs.org](https://nodejs.org) |
+| npm | ≥ 10 | bundled with Node |
+| Solana CLI | latest | `sh -c "$(curl -sSfL https://release.solana.com/stable/install)"` |
+
+---
+
+### 1. Configure the AI Agent
+
+```bash
+cd agent
+cp .env.example .env
+```
+
+Open `agent/.env` and add your OpenAI API key:
+
+```env
+OPENAI_API_KEY=sk-...your-key-here...
+RPC_URL=http://127.0.0.1:8899
+```
+
+Install dependencies (already done if you cloned fresh):
+
+```bash
+npm install
+```
+
+---
+
+### 2. Run — three terminals
+
+#### Terminal 1 — Solana localnet *(optional, for on-chain mode)*
+
+```bash
+solana-test-validator
+```
+
+> Skip this if you only want to use mock data mode.
+
+#### Terminal 2 — ga.ia AI Agent API
+
+```bash
+cd agent
+npm start
+```
+
+You should see:
+
+```
+🚀 ga.ia Agent API — http://localhost:3001
+📡 Solana RPC:   http://127.0.0.1:8899 — ✔ reachable (slot #xxxx)
+🔑 OpenAI:       ✔ loaded
+⚙️  Mode:         MOCK (set USE_MOCK=false to use Solana)
+```
+
+#### Terminal 3 — Frontend Dashboard
+
 ```bash
 cd frontend
 npm run dev
 ```
-La dashboard sarà accessibile all'indirizzo [http://localhost:5173](http://localhost:5173).
 
-### 2. Avvio dell'Agente AI
-L'agente AI si basa sul framework `solana-agent-kit`.
+Open **[http://localhost:5174](http://localhost:5174)** in your browser.
 
-Apri un **secondo** terminale nella root del progetto ed esegui:
-```bash
-cd agent
-npx ts-node index.ts
+---
+
+## Agent API Reference
+
+Base URL: `http://localhost:3001`
+
 ```
-L'agente inizierà a simulare l'ascolto della rete locale Solana per intercettare gli allarmi di frana ed emettere valutazioni.
+GET  /api/status              → Solana + OpenAI health check
+GET  /api/towers              → Tower list from active source
+POST /api/mode                → { mode: "mock" | "onchain" }
+GET  /api/summarize           → AI executive summary of all towers
+POST /api/explain             → { towerId: "T-014" }
+POST /api/report              → { towerId: "T-014" }
+POST /api/chat                → { message: "Which towers are critical?" }
+```
